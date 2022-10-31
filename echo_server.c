@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     if(serv_sock == -1)
         error_handling("socket() error");
 
-    memset(&serv_sock, 0, sizeof(serv_adr));      // 구조체 초기화
+    memset(&serv_adr, 0, sizeof(serv_adr));      // 구조체 초기화
     serv_adr.sin_family = AF_INET;
     serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_adr.sin_port = htons(atoi(argv[1]));
@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
 
     for(i =0 ; i < 5 ; i++)
     {
-        clnt_sock = accept(serv_sock, (struct sockaddr*)& clnt_adr, clnt_adr_sz);    // 연결
+
+        clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);    // 연결
         if(clnt_sock == -1)
             error_handling("accept() error");
         else
