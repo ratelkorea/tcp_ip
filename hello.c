@@ -3,9 +3,10 @@
 void main(void)
 {
  
-   
-
-    int a = 10;
+    
+    
+    
+    
  
-    printf("%p : \n", &a);
+    printf("%s : \n", a);
 }

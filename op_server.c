@@ -5,19 +5,19 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define BUF_SIZE 1024
-#define OPSZ 4
+#define BUF_SIZE 30
+
 void error_handling(char *message);
 
-int calculate(int opnum, int opnds[], char oprator);
+
 
 int main(int argc, char * argv[])
 {
-    printf("listen ");
+    
     int serv_sock, clnt_sock;
     char opinfo[BUF_SIZE];
-    int result, opnd_cnt, i;
-    int recv_cnt, recv_len;
+    
+    int recv_cnt;
     struct sockaddr_in serv_adr, clnt_adr;
     socklen_t clnt_adr_sz;
     
@@ -26,10 +26,12 @@ int main(int argc, char * argv[])
         printf("Usage : %s <port>", argv[0]);
         exit(1);
     }
-    printf("listen ");
+   
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);
     if(serv_sock == -1)
         error_handling("socket() error");
+    else    
+        printf("hello world! ");
     
     memset(&serv_adr, 0, sizeof(serv_adr));
     serv_adr.sin_family = AF_INET;
@@ -38,56 +40,32 @@ int main(int argc, char * argv[])
 
     if(bind(serv_sock, (struct sockaddr*)&serv_adr, sizeof(serv_adr)) == -1)
         error_handling("bind() error");
+    else 
+        printf("bind ");
 
     if(listen(serv_sock, 5) == -1)
         error_handling("listen() error");
-
-    printf("listen %d", serv_sock);
-
+    else
+        printf("bind");
+  
     clnt_adr_sz = sizeof(clnt_adr);
-
-    for(i = 0; i < 5; i++)
+    for(int i = 0; i < 5; i++)
     {
-        opnd_cnt = 0;
+       
         clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
-        read(clnt_sock, &opnd_cnt, 1);
 
-        printf("read  :  %d", clnt_sock);
+        read(clnt_sock, opinfo, BUF_SIZE -1);
 
-        recv_len = 0;
-        while((opnd_cnt * OPSZ + 1) > recv_len)
-        {
-            recv_cnt = read(clnt_sock, &opinfo[recv_len], BUF_SIZE - 1);
-            recv_len += recv_cnt;
-        }
-     
-        result = calculate(opnd_cnt, (int *)opinfo, opinfo[recv_len - 1]);
-        write(clnt_sock, (char *)&result, sizeof(result));
-        
-        close(clnt_sock);
+        printf("%s", opinfo);
     }
+
+
+    close(clnt_sock);
     close(serv_sock);
     return 0;
 }
 
-int calculate(int opnum, int opnds[], char op)
-{
-    int result = opnds[0], i;
-    switch(op)
-    {
-        case '+':
-        for(i = 1; i < opnum ; i++) result += opnds[i];
-        break;
-        case '-':
-        for(i = 1; i < opnum ; i++) result -= opnds[i];
-        break;
-        case '*':
-        for(i = 1; i < opnum ; i++) result *= opnds[i];
-        break;
-    }
-    printf(" result : %d", result);
-    return result;
-}
+
 
 void error_handling(char *message)
 {

@@ -10,6 +10,7 @@ void error_handling(char *message);
 
 int main(int argc, char *argv[])
 {
+    
     int serv_sock, clnt_sock;  // 소켓 디스크립터를 저장할 변수
     char message[BUF_SIZE];
     int str_len, i;
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);   // 소켓생성, (IPv4, TCP,)
     if(serv_sock == -1)
         error_handling("socket() error");
+ 
 
     memset(&serv_adr, 0, sizeof(serv_adr));      // 구조체 초기화
     serv_adr.sin_family = AF_INET;

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     int result, opnd_cnt, i;
     struct sockaddr_in serv_adr;
 
-    char a[100];
+    
     if(argc != 3)
     {
         printf("Usage : %s \n", argv[0]);
@@ -34,36 +34,18 @@ int main(int argc, char *argv[])
     serv_adr.sin_addr.s_addr = inet_addr(argv[1]);
     serv_adr.sin_port = htons(atoi(argv[2]));
 
+
+    
     if(connect(sock, (struct sockaddr*)&serv_adr, sizeof(serv_adr)) == -1)
-        error_handling("connect() error");
-    else
-        puts("Connected.......");
+    error_handling("connect() error!");
 
-    fputs("Operand count : ", stdout);
-    scanf("%d", &opnd_cnt);
-    opmsg[0] = (char)opnd_cnt;
+    int str_len = read(sock, message, sizeof(message) - 1);
+    if(str_len == -1)
+        error_handling("read() error!");
 
-    for(i = 0; i < opnd_cnt; i++)
-    {
-        printf("Operand %d :", i + 1);
-        scanf("%d" , (int *)&opmsg[OPSZ * i + 1]);
-        printf("aaaa %d\n",opmsg[OPSZ * i + 1]);
-    }
-  
-    
-
-    fgetc(stdin);
-    fputs("Operator: ",stdout);
-    scanf("%c ", &opmsg[opnd_cnt * OPSZ + 1]);
-
-    printf("bbb : %c", opmsg[opnd_cnt * OPSZ + 1]);
-
-    write(sock, opmsg, opnd_cnt * OPSZ + 2);
-    
-    read(sock, &result, RLT_SIZE);
+    printf("Message from server : %s\n",message);
     close(sock);
     return 0;
-    
 }
 
 void error_handling(char *message)
